@@ -1,0 +1,32 @@
+<!-- ehr_app/frontend/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>EHR App - Home</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <h1>🩺 EHR System</h1>
+
+  <section>
+    <h2>Register</h2>
+    <input id="reg-name" type="text" placeholder="Name" />
+    <select id="reg-role">
+      <option value="patient">Patient</option>
+      <option value="doctor">Doctor</option>
+    </select>
+    <button onclick="register()">Register</button>
+  </section>
+
+  <hr />
+
+  <section>
+    <h2>Patient List</h2>
+    <button onclick="fetchPatients()">Refresh List</button>
+    <div id="patient-list"></div>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>
