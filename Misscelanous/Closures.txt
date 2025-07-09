@@ -1,0 +1,190 @@
+In essence, a closure is a function that "remembers" its surrounding state or environment even after it has been executed.
+
+Here's a basic example to illustrate closures:
+
+function greet(name) {
+    return function() {
+        console.log("Hello, " + name + "!");
+    };
+}
+
+const greetJohn = greet("John");
+greetJohn(); // What does this print?
+
+Explanation
+Let's break down what happens step-by-step.
+
+Function Declaration:
+The greet function is defined. It takes a parameter name and returns an inner function.
+This inner function doesn't take any arguments but uses the name variable from greet’s scope.
+
+Calling greet("John"):
+When greet("John") is called, it creates a new execution context for greet.
+name is assigned the value "John".
+The inner function (which logs "Hello, " + name + "!") is returned and assigned to the variable greetJohn.
+Importantly, even after greet finishes executing, the returned inner function retains access to name through closure.
+
+Calling greetJohn():
+When greetJohn() is called, it triggers the inner function that was created inside greet.
+The inner function remembers the value of name as "John" through closure.
+Output: "Hello, John!"
+
+Visualizing the Closure
+Here's how the variables look after each step:
+
+After greet("John") Call:
+greetJohn now holds a reference to the inner function, which closes over name = "John".
+
+When greetJohn() is Called:
+The inner function accesses the name variable via the closure.
+It outputs: "Hello, John!"
+
+
+
+The code creates a closure using the createCounter function. Every time createCounter is called, it creates a new instance of count and returns an inner function that has access to count through a closure.
+
+
+function createCounter() {
+    let count = 0;
+    
+    return function() {
+        count += 1;
+        return count;
+    };
+}
+
+const counter1 = createCounter();
+console.log(counter1()); // ?
+console.log(counter1()); // ?
+
+const counter2 = createCounter();
+console.log(counter2()); // ?
+
+
+Visualizing the Execution
+
+Global Context Setup
+Global Variables:
+createCounter: Holds a reference to the createCounter function.
+counter1 and counter2: Initially undefined.
+
+Call Stack: Initially empty.
+
+First createCounter() Call
+When const counter1 = createCounter(); is executed:
+
+Call Stack:
+The createCounter function is called, so its execution context is pushed onto the call stack.
+
+Execution Context for createCounter:
+A new variable count is created in the createCounter context and initialized to 0.
+The inner function is defined and has access to count via closure.
+
+Returning from createCounter:
+createCounter returns the inner function, which closes over the count variable.
+counter1 is assigned this returned inner function, now holding a reference to a function that has its own independent count variable.
+
+Call Stack: The createCounter execution context is popped off the stack.
+
+Memory State After First createCounter Call:
+counter1 -> function (with closed-over count = 0)
+
+
+First counter1() Call
+When console.log(counter1()); is executed:
+
+Call Stack:
+counter1 (the inner function) is called, creating a new execution context for this function.
+
+Execution Context for counter1:
+The function accesses count, which is 0 due to closure.
+count is incremented by 1, so count = 1.
+The function returns 1.
+
+Returning from counter1:
+The returned value 1 is printed.
+
+Call Stack: The counter1 execution context is popped off.
+
+Memory State After First counter1() Call:
+counter1 -> function (with closed-over count = 1)
+
+Output:
+1
+
+
+Second counter1() Call
+
+When console.log(counter1()); is executed again:
+
+Call Stack:
+
+counter1 (the inner function) is called again, creating a new execution context for this function.
+Execution Context for counter1:
+
+count is accessed, which is 1 from the previous call.
+count is incremented by 1, so count = 2.
+The function returns 2.
+Returning from counter1:
+
+The returned value 2 is printed.
+Call Stack: The counter1 execution context is popped off.
+Memory State After Second counter1() Call:
+counter1 -> function (with closed-over count = 2)
+
+Output:
+2
+
+
+Second createCounter() Call
+
+When const counter2 = createCounter(); is executed:
+
+Call Stack:
+
+The createCounter function is called again, so its execution context is pushed onto the call stack.
+Execution Context for createCounter:
+
+A new variable count is created for this createCounter call, initialized to 0.
+A new inner function is defined, closing over this new instance of count.
+This inner function is returned and assigned to counter2.
+Returning from createCounter:
+
+Call Stack: The createCounter execution context is popped off.
+
+Memory State After Second createCounter Call:
+counter1 -> function (with closed-over count = 2)
+counter2 -> function (with closed-over count = 0)
+
+
+First counter2() Call
+When console.log(counter2()); is executed:
+
+Call Stack:
+
+counter2 (the inner function) is called, creating a new execution context.
+
+Execution Context for counter2:
+This counter2 function has a new count variable in its closure.
+count is 0, and it gets incremented to 1.
+The function returns 1.
+
+Returning from counter2:
+The returned value 1 is printed.
+
+Call Stack: The counter2 execution context is popped off.
+
+Final Memory State:
+counter1 -> function (with closed-over count = 2)
+counter2 -> function (with closed-over count = 1)
+
+Output:
+1
+
+
+Final Output
+The complete output of the program is:
+1
+2
+1
+Each createCounter() call creates a separate closure, meaning counter1 and counter2 each maintain their own independent count variable. This separation allows each instance to count independently.

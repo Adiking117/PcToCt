@@ -1,0 +1,68 @@
+In JavaScript, call, bind, and apply are methods that allow you to set the this context and invoke functions. They are often used to borrow methods from other objects or to ensure that this points to a particular object. Here's an explanation and example for each:
+
+call
+
+The call method calls a function with a given this value and arguments provided individually.
+
+let person = {
+  firstName: 'John',
+  lastName: 'Doe',
+  fullName: function() {
+    console.log(this.firstName + ' ' + this.lastName);
+  }
+};
+
+let anotherPerson = {
+  firstName: 'Jane',
+  lastName: 'Smith'
+};
+
+person.fullName.call(anotherPerson); // Output: Jane Smith
+
+In this example, person.fullName is called with anotherPerson as its this value.
+
+apply
+
+The apply method is similar to call, but it takes an array of arguments instead of a list of arguments.
+
+let person = {
+  firstName: 'John',
+  lastName: 'Doe',
+  fullName: function(greeting, punctuation) {
+    console.log(greeting + ' ' + this.firstName + ' ' + this.lastName + punctuation);
+  }
+};
+
+let anotherPerson = {
+  firstName: 'Jane',
+  lastName: 'Smith'
+};
+
+person.fullName.apply(anotherPerson, ['Hello', '!']); // Output: Hello Jane Smith!
+
+In this example, person.fullName is called with anotherPerson as its this value and arguments provided as an array.
+
+bind
+
+The bind method creates a new function that, when called, has its this value set to the provided value. It does not immediately invoke the function.
+
+let person = {
+  firstName: 'John',
+  lastName: 'Doe',
+  fullName: function() {
+    console.log(this.firstName + ' ' + this.lastName);
+  }
+};
+
+let anotherPerson = {
+  firstName: 'Jane',
+  lastName: 'Smith'
+};
+
+let boundFullName = person.fullName.bind(anotherPerson);
+boundFullName(); // Output: Jane Smith
+
+In this example, person.fullName.bind(anotherPerson) returns a new function with this set to anotherPerson. When boundFullName is called, it uses anotherPerson as its this value.
+
+These methods are powerful tools for controlling the context (this) in which a function operates, allowing for more flexible and reusable code.
+

@@ -1,0 +1,49 @@
+In JavaScript, a prototype is a mechanism by which objects inherit features from one another. Each JavaScript object has an internal property called [[Prototype]], which points to another object, known as its prototype. This prototype is essentially a template or blueprint from which the object can inherit properties and methods.
+
+Here's how it works:
+
+1. Prototype Chain: When you access a property or method on an object, JavaScript first checks if that property exists on the object itself. If it doesn’t, JavaScript looks up the prototype chain to find it. This chain continues until it reaches null (which signifies the end of the chain).
+
+
+2. Object Prototypes:
+
+Every JavaScript function has a prototype property. When you create an object using a constructor function, the prototype of that constructor becomes the [[Prototype]] of the new object.
+
+If you create an object using new SomeConstructor(), the resulting object will inherit from SomeConstructor.prototype.
+
+
+
+3. Modifying Prototypes:
+
+You can add properties and methods to an object’s prototype, which will be shared across all instances created from that constructor.
+
+This is particularly useful for methods that should be shared among all instances of a certain type (e.g., methods on arrays or strings).
+
+
+
+
+Here’s an example:
+
+// Constructor function
+function Person(name) {
+  this.name = name;
+}
+
+// Adding a method to the prototype
+Person.prototype.greet = function() {
+  return `Hello, my name is ${this.name}`;
+};
+
+// Creating a new instance
+const alice = new Person('Alice');
+console.log(alice.greet()); // Output: Hello, my name is Alice
+
+In this example:
+
+greet is added to Person.prototype.
+
+alice has access to greet through the prototype chain, even though greet is not directly on alice.
+
+
+This concept is foundational in JavaScript's object-oriented programming, where prototype-based inheritance enables objects to share behavior.
+

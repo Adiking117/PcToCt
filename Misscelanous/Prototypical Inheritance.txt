@@ -1,0 +1,38 @@
+Prototypal inheritance in JavaScript is a way to create an object based on another object. Instead of classes and instances, JavaScript uses prototypes, where objects can inherit properties and methods from other objects.
+
+Here's a simple example to illustrate prototypal inheritance:
+
+// Define a prototype object
+let person = {
+  greet: function() {
+    console.log(`Hello, my name is ${this.name}`);
+  }
+};
+
+// Create a new object based on the prototype
+let john = Object.create(person);
+john.name = 'John';
+john.greet(); // Output: Hello, my name is John
+
+// Create another object based on the same prototype
+let jane = Object.create(person);
+jane.name = 'Jane';
+jane.greet(); // Output: Hello, my name is Jane
+
+In this example:
+
+1. We define a prototype object person with a method greet.
+
+
+2. We create a new object john using Object.create(person), which sets person as the prototype of john.
+
+
+3. We assign a name property to john and call the greet method, which accesses the method from the prototype.
+
+
+4. Similarly, we create another object jane based on the same prototype and assign a name property.
+
+
+
+This demonstrates how objects can inherit properties and methods from a prototype object, allowing for shared functionality and properties.
+
