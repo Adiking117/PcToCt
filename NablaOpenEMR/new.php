@@ -14,12 +14,15 @@
  * @license   https://github.com/openemr/openemr/blob/master/LICENSE GNU General Public License 3
  **/
 
- require_once(__DIR__ . "/../../globals.php");
+require_once(__DIR__ . "/../../globals.php");
 require_once("$srcdir/api.inc.php");
 
 use OpenEMR\Common\Csrf\CsrfUtils;
 use OpenEMR\Core\Header;
 
+if (!CsrfUtils::verifyCsrfToken($_POST["csrf_token_form"])) {
+    CsrfUtils::csrfNotVerified();
+}
 $returnurl = 'encounter_top.php';
 
 ?>
@@ -27,6 +30,75 @@ $returnurl = 'encounter_top.php';
 <head>
     <title><?php echo xlt("SOAP Notes"); ?></title>
     <?php Header::setupHeader(); ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let populated = false;
+
+            const subjectiveField = document.querySelector('textarea[name="soap_notes"]'); 
+            const intervalId = setInterval(async () => {
+                if (populated) return;
+
+                try {
+                    const text = await navigator.clipboard.readText();
+                    if (text && text.trim().startsWith("Subjective")) {
+                        console.log("Clipboard SOAP detected:", text);
+
+                        const soap = parseSOAPNotes(text);
+                        if (soap) {
+                            
+                            clearInterval(intervalId);
+
+                            // Send SOAP data to saveinjson.php
+                            let formData = new FormData();
+                            formData.append('clipboard_data', JSON.stringify(soap));
+
+                            fetch('<?php echo $rootdir;?>/forms/nabla/saveinjson.php', {
+                                method: 'POST',
+                                body: formData
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    console.log("Saved to JSON. newid:", data.newid);
+                                } else {
+                                    console.error("Error saving JSON:", data);
+                                }
+                            })
+                            .catch(err => console.error("AJAX error:", err));
+
+                            // Clear clipboard
+                            try {
+                                await navigator.clipboard.writeText("");
+                                console.log("Clipboard cleared.");
+                            } catch (err) {
+                                console.warn("Clipboard not cleared:", err);
+                            }
+                        }
+                    }
+                } catch (err) {
+                    console.error("Clipboard read error:", err);
+                }
+            }, 2000);
+
+            function parseSOAPNotes(text) {
+                const regex = /Subjective[:\s]*([\s\S]*?)Objective[:\s]*([\s\S]*?)Assessment[:\s]*([\s\S]*?)Plan[:\s]*([\s\S]*)$/i;
+
+                const match = text.match(regex);
+                if (match) {
+                    return {
+                        subjective: match[1].trim(),
+                        objective: match[2].trim(),
+                        assessment: match[3].trim(),
+                        plan: match[4].trim()
+                    };
+                } else {
+                    console.warn("Could not parse SOAP sections from clipboard.");
+                    return null;
+                }
+            }
+        });
+</script>
+
 </head>
 <body>
     <div class="container mt-3">
